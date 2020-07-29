@@ -1,12 +1,13 @@
-import React from 'react';
-import Home from "./pages/home";
+import React from "react";
+import NotificationsProvider from "./common/providers/notifications";
+import AppRouter from "./pages/AppRouter";
+import Notifications from "./common/components/Notifications";
 
-function App() {
+export default function App() {
   return (
-    <div className="App">
-      <Home />
-    </div>
+    <NotificationsProvider>
+      <Notifications />
+      <AppRouter />
+    </NotificationsProvider>
   );
 }
-
-export default App;

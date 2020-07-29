@@ -1,0 +1,3 @@
+interface FetchUser {
+    data: User
+}
