@@ -1,5 +1,12 @@
 import React from "react";
 import { Column } from "react-table";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
+
+const RemoveButton = styled.button`
+  background: #fff;
+  border: none;
+`;
 
 const columns: (onDelete: (id: number) => void) => Array<Column<User>> = (
   onDelete
@@ -20,15 +27,13 @@ const columns: (onDelete: (id: number) => void) => Array<Column<User>> = (
     Header: "",
     accessor: "id",
     id: "" + new Date(),
-    Cell: ({ value }) => <a href={`/users/${value}`}>Edit</a>,
+    Cell: ({ value }) => <Link to={`/users/${value}`}>Edit</Link>,
   },
   {
     Header: "",
     accessor: "id",
     Cell: ({ value }) => (
-      <a href="" onClick={() => onDelete(value)}>
-        Remove
-      </a>
+      <RemoveButton onClick={() => onDelete(value)}>Remove</RemoveButton>
     ),
   },
 ];

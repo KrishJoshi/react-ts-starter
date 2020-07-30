@@ -5,12 +5,20 @@ import userValidationSchema from "./validations";
 import Loading from "../../../../common/components/Loading";
 
 interface Props {
-  user: User;
+  user?: User;
   saving: boolean;
   onSubmit: (user: User) => void;
 }
 
-const EditUserForm = ({ user, saving, onSubmit }: Props) => {
+const initialUser: User = {
+  avatar: "",
+  email: "",
+  first_name: "",
+  id: 0,
+  last_name: "",
+};
+
+const EditUserForm = ({ user = initialUser, saving, onSubmit }: Props) => {
   const { handleSubmit, errors, handleChange, values, isValid } = useFormik({
     initialValues: user,
     validationSchema: userValidationSchema,

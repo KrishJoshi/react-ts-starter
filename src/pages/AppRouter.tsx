@@ -1,6 +1,6 @@
 import { Container, Page } from "../common/components/Wrapper";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import User from "./user";
+import { CreatePage, EditPage } from "./user";
 import Home from "./home";
 import React from "react";
 
@@ -9,8 +9,11 @@ export default () => (
     <Page>
       <Router>
         <Switch>
+          <Route path="/users/create">
+            <CreatePage />
+          </Route>
           <Route path="/users/:id">
-            <User />
+            <EditPage />
           </Route>
           <Route path="/">
             <Home />

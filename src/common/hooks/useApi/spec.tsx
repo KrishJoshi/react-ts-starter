@@ -1,171 +1,163 @@
-import { AxiosResponse, AxiosError } from 'axios';
-import { renderHook, act } from '@testing-library/react-hooks';
-import { usePost, useGet } from '.';
-import api from 'axios';
+import { AxiosResponse, AxiosError } from "axios";
+import { renderHook, act } from "@testing-library/react-hooks";
+import { usePost, useGet } from ".";
+import api from "./interceptor";
 
-jest.mock('.');
+jest.mock("./interceptor");
 
 const mockedApi = api as jest.Mocked<typeof api>;
-const TEST_DATA = ['TEST'];
-const CONFIG = {
-    headers: {
-        'If-Match': '1234',
-    },
-};
+const TEST_DATA = ["TEST"];
 
 afterEach(jest.clearAllMocks);
 
-describe('API: hooks', () => {
-    describe('usePost', () => {
-        describe('when a successful call is made', () => {
-            beforeEach(() => {
-                mockedApi.post.mockResolvedValue({
-                    data: TEST_DATA,
-                    headers: {},
-                } as AxiosResponse);
-            });
+describe("API: hooks", () => {
+  describe("usePost", () => {
+    describe("when a successful call is made", () => {
+      beforeEach(() => {
+        mockedApi.post.mockResolvedValue({
+          data: TEST_DATA,
+          headers: {},
+        } as AxiosResponse);
+      });
 
-            it('should call the post method on the api with the URL and return the response', async () => {
-                let response: any;
-                const { result } = renderHook(() => usePost('/test-url'));
+      it("should call the post method on the api with the URL and return the response", async () => {
+        let response: any;
+        const { result } = renderHook(() => usePost("/test-url"));
 
-                await act(async () => {
-                    response = await result.current.post({
-                        data: {},
-                        config: CONFIG,
-                    });
-                });
-
-                expect(mockedApi.post).toHaveBeenCalledWith('/test-url', {}, CONFIG);
-                expect(response!.data).toEqual(TEST_DATA);
-            });
-
-            it('should remove errors after a successful response', async () => {
-                const { result } = renderHook(() => usePost('/test-url'));
-
-                await act(async () => {
-                    await result.current.post({
-                        data: {},
-                        config: CONFIG,
-                    });
-                });
-
-                expect(result.current.errors).toEqual([]);
-            });
+        await act(async () => {
+          response = await result.current.post({
+            payload: {},
+          });
         });
 
-        describe('when an error is returned', () => {
-            beforeEach(() => {
-                mockedApi.post.mockRejectedValue({
-                    response: {
-                        data: [
-                            {
-                                message: 'ERROR',
-                            },
-                        ],
-                    },
-                } as AxiosError);
-            });
+        expect(response!.payload).toEqual(TEST_DATA);
+      });
 
-            it('should set the errors on the state and return them', async () => {
-                const { result } = renderHook(() => usePost('/test-url'));
+      it("should remove errors after a successful response", async () => {
+        const { result } = renderHook(() => usePost("/test-url"));
 
-                await act(async () => {
-                    try {
-                        await result.current.post({});
-                    } catch (e) {
-                        expect(e.response).toEqual(['ERROR']);
-                        expect(result.current.errors).toEqual(['ERROR']);
-                    }
-                });
-            });
-
-            it('should reset errors', async () => {
-                const { result } = renderHook(() => usePost('/test-url'));
-
-                await act(async () => {
-                    try {
-                        await result.current.post({});
-                    } catch (e) {
-                        result.current.reset();
-                        expect(result.current.errors).toEqual([]);
-                        expect(result.current.loading).toEqual(false);
-                    }
-                });
-            });
+        await act(async () => {
+          await result.current.post({
+            payload: {},
+          });
         });
+
+        expect(result.current.errors).toEqual([]);
+      });
     });
-    describe('useGet', () => {
-        describe('when a successful call is made', () => {
-            beforeEach(() => {
-                mockedApi.get.mockResolvedValue({
-                    data: TEST_DATA,
-                    headers: {},
-                } as AxiosResponse);
-            });
 
-            it('should call the get method on the api with the URL and return the response', async () => {
-                let response: any;
-                const { result } = renderHook(() => useGet('/test-url'));
+    describe("when an error is returned", () => {
+      beforeEach(() => {
+        mockedApi.post.mockRejectedValue({
+          response: {
+            data: [
+              {
+                message: "ERROR",
+              },
+            ],
+          },
+        } as AxiosError);
+      });
 
-                await act(async () => {
-                    response = await result.current.get();
-                });
+      it("should set the errors on the state and return them", async () => {
+        const { result } = renderHook(() => usePost("/test-url"));
 
-                expect(mockedApi.get).toHaveBeenCalledWith('/test-url', undefined);
-                expect(response!.data).toEqual(TEST_DATA);
-            });
-
-            it('should remove errors after a successful response', async () => {
-                const { result } = renderHook(() => useGet('/test-url'));
-
-                await act(async () => {
-                    await result.current.get();
-                });
-
-                expect(result.current.errors).toEqual([]);
-            });
+        await act(async () => {
+          try {
+            await result.current.post({});
+          } catch (e) {
+            expect(e.response).toEqual({ data: [{ message: "ERROR" }] });
+            expect(result.current.errors).toEqual(["ERROR"]);
+          }
         });
+      });
 
-        describe('when an error is returned', () => {
-            beforeEach(() => {
-                mockedApi.get.mockRejectedValue({
-                    response: {
-                        data: [
-                            {
-                                message: 'ERROR',
-                            },
-                        ],
-                    },
-                } as AxiosError);
-            });
+      it("should reset errors", async () => {
+        const { result } = renderHook(() => usePost("/test-url"));
 
-            it('should set the errors on the state and return them', async () => {
-                const { result } = renderHook(() => useGet('/test-url'));
-
-                await act(async () => {
-                    try {
-                        await result.current.get();
-                    } catch (e) {
-                        expect(e.response).toEqual(['ERROR']);
-                        expect(result.current.errors).toEqual(['ERROR']);
-                    }
-                });
-            });
-
-            it('should reset errors', async () => {
-                const { result } = renderHook(() => useGet('/test-url'));
-
-                await act(async () => {
-                    try {
-                        await result.current.get();
-                    } catch (e) {
-                        result.current.reset();
-                        expect(result.current.errors).toEqual([]);
-                        expect(result.current.loading).toEqual(false);
-                    }
-                });
-            });
+        await act(async () => {
+          try {
+            await result.current.post({});
+          } catch (e) {
+            result.current.reset();
+            expect(result.current.errors).toEqual([]);
+            expect(result.current.loading).toEqual(false);
+          }
         });
+      });
     });
+  });
+  describe("useGet", () => {
+    describe("when a successful call is made", () => {
+      beforeEach(() => {
+        mockedApi.get.mockResolvedValue({
+          data: TEST_DATA,
+          headers: {},
+        } as AxiosResponse);
+      });
+
+      it("should call the get method on the api with the URL and return the response", async () => {
+        let response: any;
+        const { result } = renderHook(() => useGet("/test-url"));
+
+        await act(async () => {
+          response = await result.current.get();
+        });
+
+        expect(mockedApi.get).toHaveBeenCalledWith("/test-url");
+        expect(response!.payload).toEqual(TEST_DATA);
+      });
+
+      it("should remove errors after a successful response", async () => {
+        const { result } = renderHook(() => useGet("/test-url"));
+
+        await act(async () => {
+          await result.current.get();
+        });
+
+        expect(result.current.errors).toEqual([]);
+      });
+    });
+
+    describe("when an error is returned", () => {
+      beforeEach(() => {
+        mockedApi.get.mockRejectedValue({
+          response: {
+            data: [
+              {
+                message: "ERROR",
+              },
+            ],
+          },
+        } as AxiosError);
+      });
+
+      it("should set the errors on the state and return them", async () => {
+        const { result } = renderHook(() => useGet("/test-url"));
+
+        await act(async () => {
+          try {
+            await result.current.get();
+          } catch (e) {
+            expect(e.response).toEqual({ data: [{ message: "ERROR" }] });
+            expect(result.current.errors).toEqual(["ERROR"]);
+          }
+        });
+      });
+
+      it("should reset errors", async () => {
+        const { result } = renderHook(() => useGet("/test-url"));
+
+        await act(async () => {
+          try {
+            await result.current.get();
+          } catch (e) {
+            result.current.reset();
+            expect(result.current.errors).toEqual([]);
+            expect(result.current.loading).toEqual(false);
+          }
+        });
+      });
+    });
+  });
 });

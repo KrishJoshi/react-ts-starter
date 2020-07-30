@@ -1,9 +1,9 @@
 import React from "react";
 import useNotifications from "../../hooks/useNotifications";
 import { NotificationType } from "../../providers/notifications";
-import { DismissNotification, NotificationMessage } from "./styles";
+import { DismissToast, ToastMessage } from "./styles";
 
-const Notifications = () => {
+const Toast = () => {
   const { removeNotification, notification } = useNotifications();
 
   const onClose = () => {
@@ -12,14 +12,16 @@ const Notifications = () => {
 
   return (
     notification && (
-      <NotificationMessage>
+      <ToastMessage>
         {notification.type === NotificationType.SUCCESS && "✅"}
         {notification.type === NotificationType.ERROR && "🔴"}
         {notification.message}
-        <DismissNotification onClick={onClose}>x</DismissNotification>
-      </NotificationMessage>
+        <DismissToast id="close-btn" onClick={onClose}>
+          x
+        </DismissToast>
+      </ToastMessage>
     )
   );
 };
 
-export default Notifications;
+export default Toast;

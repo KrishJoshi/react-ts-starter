@@ -13,7 +13,7 @@ const useDeleteUsers = () => {
   async function remove(id: number) {
     try {
       await api.delete({ urlExtra: id });
-      notify.addNotification("User removed", NotificationType.SUCCESS);
+      notify.addNotification("User Removed", NotificationType.SUCCESS);
     } catch (e) {
       notify.addNotification("User unable to remove", NotificationType.ERROR);
       api.reset();
@@ -21,7 +21,7 @@ const useDeleteUsers = () => {
   }
 
   return {
-    loading: api.loading,
+    removing: api.loading,
     remove,
   };
 };

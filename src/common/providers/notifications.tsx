@@ -9,13 +9,13 @@ export enum NotificationType {
   SUCCESS,
 }
 
-interface Notification {
+export interface NotificationPayload {
   message: string;
   type: NotificationType;
 }
 
 interface NotificationsContextProps {
-  notification: Notification | null;
+  notification: NotificationPayload | null;
   addNotification: (message: string, type: NotificationType) => void;
   removeNotification: () => void;
 }
@@ -28,7 +28,9 @@ export const NotificationsContext = React.createContext<
 });
 
 export default function NotificationsProvider({ children }: Props) {
-  const [notification, setNotification] = useState<Notification | null>(null);
+  const [notification, setNotification] = useState<NotificationPayload | null>(
+    null
+  );
 
   const removeMessage = () => setNotification(null);
 

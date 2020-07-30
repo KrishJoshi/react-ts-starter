@@ -1,7 +1,7 @@
 import React from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import { renderHook, act, HookResult } from "@testing-library/react-hooks";
-import useFetchUsers from ".";
+import useCreateUser from ".";
 import api from "../../../../common/hooks/useApi/interceptor";
 import NotificationsProvider, {
   NotificationType,
@@ -13,7 +13,7 @@ import useNotifications from "../../../../common/hooks/useNotifications";
 jest.mock("../../../../common/hooks/useApi/interceptor");
 jest.mock("../../../../common/hooks/useNotifications");
 
-let result: HookResult<ReturnType<typeof useFetchUsers>>;
+let result: HookResult<ReturnType<typeof useCreateUser>>;
 const mockedApi = api as jest.Mocked<typeof api>;
 
 const wrapper = ({ children }: { children?: React.ReactNode }) => (
@@ -22,50 +22,53 @@ const wrapper = ({ children }: { children?: React.ReactNode }) => (
 
 afterEach(jest.clearAllMocks);
 
-describe("useFetchUsers", () => {
+describe("useCreateUser", () => {
   const mockAddNotification = jest.fn();
   beforeEach(() => {
     // @ts-ignore
     useNotifications.mockReturnValue({
       addNotification: mockAddNotification,
     });
-    mockedApi.get.mockResolvedValue({
+    mockedApi.post.mockResolvedValue({
       headers: {},
-      data: { data: [userFixture] },
+      data: {},
     } as AxiosResponse);
-    const renderedHook = renderHook(() => useFetchUsers(), {
+    const renderedHook = renderHook(() => useCreateUser(), {
       wrapper,
     });
     result = renderedHook.result;
   });
 
-  it("should initalise with loading false", async () => {
-    expect(result.current.loading).toBe(false);
+  it("should initalise with saving false", async () => {
+    expect(result.current.saving).toBe(false);
   });
 
-  it("should set loading true when fetching", async () => {
-    act(() => result.current.fetch());
-    expect(result.current.loading).toBe(true);
+  it("should set saving true when saving", async () => {
+    act(() => result.current.save(userFixture));
+    expect(result.current.saving).toBe(true);
   });
 
   it("should call the API", async () => {
-    await act(async () => await result.current.fetch());
-    expect(mockedApi.get).toHaveBeenCalledWith(URLS.USERS);
+    await act(async () => await result.current.save(userFixture));
+    expect(mockedApi.post).toHaveBeenCalledWith(URLS.USERS, userFixture);
   });
 
   it("should show a success message", async () => {
-    await act(async () => await result.current.fetch());
-    expect(result.current.users).toEqual([userFixture]);
+    await act(async () => await result.current.save(userFixture));
+    expect(mockAddNotification).toHaveBeenCalledWith(
+      "User Created",
+      NotificationType.SUCCESS
+    );
   });
 
   it("should show a banner on API error", async () => {
     const ERROR = "ERROR";
-    mockedApi.get.mockRejectedValue({
+    mockedApi.post.mockRejectedValue({
       response: { data: [{ message: ERROR }] },
     } as AxiosError);
-    await act(async () => await result.current.fetch());
+    await act(async () => await result.current.save(userFixture));
     expect(mockAddNotification).toHaveBeenCalledWith(
-      `Unable to fetch all users`,
+      `Error while creating user:${ERROR}`,
       NotificationType.ERROR
     );
   });

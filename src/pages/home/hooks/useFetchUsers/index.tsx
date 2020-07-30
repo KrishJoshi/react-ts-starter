@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useGet } from "../../../../common/hooks/useApi";
 import { USERS } from "../../../../common/urls";
+import { NotificationType } from "../../../../common/providers/notifications";
+import useNotifications from "../../../../common/hooks/useNotifications";
 
 interface FetchUsers {
   data: Users;
@@ -9,6 +11,7 @@ interface FetchUsers {
 const useFetchUsers = () => {
   const [users, setUsers] = useState<Users>([]);
   const api = useGet<FetchUsers>(USERS);
+  const notify = useNotifications();
 
   useEffect(() => {
     fetch();
@@ -18,10 +21,17 @@ const useFetchUsers = () => {
     try {
       const { payload } = await api.get();
       setUsers(payload.data);
-    } catch (e) {}
+    } catch (e) {
+      notify.addNotification(
+        "Unable to fetch all users",
+        NotificationType.ERROR
+      );
+      api.reset();
+    }
   }
 
   return {
+    fetch,
     loading: api.loading,
     users,
   };

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const NotificationMessage = styled.div`
+export const ToastMessage = styled.div`
   border: 1px #fff solid;
   background: linear-gradient(45deg, #4158d0, #c850c0);
   position: fixed;
@@ -11,7 +11,7 @@ export const NotificationMessage = styled.div`
   color: #fff;
 `;
 
-export const DismissNotification = styled.button`
+export const DismissToast = styled.button`
   position: absolute;
   top: -10px;
   background: #fff;
