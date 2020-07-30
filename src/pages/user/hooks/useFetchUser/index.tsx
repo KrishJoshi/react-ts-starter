@@ -11,7 +11,7 @@ const useFetchUser = (id: number) => {
 
   useEffect(() => {
     fetch();
-  }, []);
+  });
 
   async function fetch() {
     try {

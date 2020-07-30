@@ -25,8 +25,7 @@ afterEach(jest.clearAllMocks);
 describe("useCreateUser", () => {
   const mockAddNotification = jest.fn();
   beforeEach(() => {
-    // @ts-ignore
-    useNotifications.mockReturnValue({
+    (useNotifications as jest.Mock).mockReturnValue({
       addNotification: mockAddNotification,
     });
     mockedApi.post.mockResolvedValue({

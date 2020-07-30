@@ -25,8 +25,7 @@ afterEach(jest.clearAllMocks);
 describe("useEditUser", () => {
   const mockAddNotification = jest.fn();
   beforeEach(() => {
-    // @ts-ignore
-    useNotifications.mockReturnValue({
+    (useNotifications as jest.Mock).mockReturnValue({
       addNotification: mockAddNotification,
     });
     mockedApi.put.mockResolvedValue({

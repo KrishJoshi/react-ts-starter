@@ -15,7 +15,7 @@ const useFetchUsers = () => {
 
   useEffect(() => {
     fetch();
-  }, []);
+  });
 
   async function fetch() {
     try {

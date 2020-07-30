@@ -15,8 +15,7 @@ describe("Toast", () => {
   describe("default", () => {
     const removeNotification = jest.fn();
     beforeEach(() => {
-      // @ts-ignore
-      useNotifications.mockReturnValue({
+      (useNotifications as jest.Mock).mockReturnValue({
         notification,
         removeNotification,
       });
@@ -40,8 +39,7 @@ describe("Toast", () => {
 
   describe("error", () => {
     it("should show a stop sign, if notification is of type Error", async () => {
-      // @ts-ignore
-      useNotifications.mockReturnValue({
+      (useNotifications as jest.Mock).mockReturnValue({
         notification: { ...notification, type: NotificationType.ERROR },
       });
       wrapper = shallow(<Toast />);

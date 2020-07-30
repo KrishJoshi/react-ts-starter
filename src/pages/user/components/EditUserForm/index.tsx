@@ -24,7 +24,6 @@ const EditUserForm = ({ user = initialUser, saving, onSubmit }: Props) => {
     validationSchema: userValidationSchema,
     onSubmit,
   });
-
   return (
     <Form onSubmit={handleSubmit}>
       <FormGroup>
@@ -67,7 +66,7 @@ const EditUserForm = ({ user = initialUser, saving, onSubmit }: Props) => {
       {saving ? (
         <Loading />
       ) : (
-        <Submit disabled={!isValid} type="submit">
+        <Submit id="form-submit" disabled={!isValid} type="submit">
           Submit
         </Submit>
       )}

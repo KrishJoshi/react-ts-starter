@@ -25,8 +25,7 @@ afterEach(jest.clearAllMocks);
 describe("useDeleteUser", () => {
   const mockAddNotification = jest.fn();
   beforeEach(() => {
-    // @ts-ignore
-    useNotifications.mockReturnValue({
+    (useNotifications as jest.Mock).mockReturnValue({
       addNotification: mockAddNotification,
     });
     mockedApi.delete.mockResolvedValue({
